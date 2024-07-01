@@ -1,33 +1,41 @@
 package org.example;
 
-import java.util.ArrayList;
+import java.sql.SQLException;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class Library {
-    private List<Book> books;
-
-    public Library() {
-        this.books = new ArrayList<>();
-    }
 
     public void addBook(Book book) {
-        books.add(book);
+        try {
+            DatabaseManager.addBook(book);
+        } catch (SQLException e) {
+            System.out.println("Error adding book: " + e.getMessage());
+        }
     }
 
     public void removeBook(String isbn) {
-        books.removeIf(book -> book.getIsbn().equals(isbn));
+        try {
+            DatabaseManager.removeBook(isbn);
+        } catch (SQLException e) {
+            System.out.println("Error removing book: " + e.getMessage());
+        }
     }
 
     public List<Book> searchBooks(String title, String author, Integer year) {
-        return books.stream()
-                .filter(book -> (title == null || book.getTitle().equalsIgnoreCase(title)) &&
-                        (author == null || book.getAuthor().equalsIgnoreCase(author)) &&
-                        (year == null || book.getYear() == year))
-                .collect(Collectors.toList());
+        try {
+            return DatabaseManager.searchBooks(title, author, year);
+        } catch (SQLException e) {
+            System.out.println("Error searching books: " + e.getMessage());
+            return null;
+        }
     }
 
     public List<Book> getAllBooks() {
-        return new ArrayList<>(books);
+        try {
+            return DatabaseManager.getAllBooks();
+        } catch (SQLException e) {
+            System.out.println("Error retrieving all books: " + e.getMessage());
+            return null;
+        }
     }
 }
